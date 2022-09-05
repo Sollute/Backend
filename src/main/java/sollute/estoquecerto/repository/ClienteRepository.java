@@ -11,6 +11,8 @@ import java.util.List;
 
 public interface ClienteRepository extends JpaRepository<Cliente, Integer> {
 
+    Boolean existsByTelefoneCliente(String telefoneCliente);
+
     List<Cliente> findByFkEmpresaIdEmpresa(Integer idEmpresa);
 
     @Transactional

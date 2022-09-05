@@ -34,20 +34,28 @@ public class ClienteController {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
         String timeFormated = LocalDateTime.now().format(formatter);
+        String telefone = novoCliente.getTelefoneCliente();
 
         if (empresaRepository.existsById(idEmpresa)) {
-//            try {
-                System.out.printf("\n\n[ LOG ] - [%s] --- Criando o cliente...", timeFormated);
+            System.out.printf("\n\n[ LOG ] - [%s] --- Criando o cliente...", timeFormated);
 
-                clienteRepository.save(novoCliente);
+            try {
 
-                System.out.printf("\n[ LOG ] - [%s] --- Cliente criado com sucesso.", timeFormated);
-                return status(HttpStatus.CREATED).build();
+                if (!clienteRepository.existsByTelefoneCliente(telefone)) {
+                    clienteRepository.save(novoCliente);
+                    System.out.printf("\n[ LOG ] - [%s] --- Cliente criado com sucesso.", timeFormated);
+                    return status(HttpStatus.CREATED).build();
+                }
 
-//            } catch (RuntimeException ex) {
-//                System.out.printf("\n[ LOG ] - [%s] --- Falha ao criar o cliente.", timeFormated);
-//                return status(HttpStatus.BAD_REQUEST).body(ex.toString());
-//            }
+                System.out.printf("\n\n[ LOG ] - [%s] --- Cliente já existe.", timeFormated);
+                return status(HttpStatus.NOT_FOUND).body(
+                        ("Esse cliente já existe.")
+                );
+
+            } catch (RuntimeException ex) {
+                System.out.printf("\n[ LOG ] - [%s] --- Falha ao criar o cliente.", timeFormated);
+                return status(HttpStatus.BAD_REQUEST).body(ex.toString());
+            }
 
         }
 

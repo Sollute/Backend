@@ -35,15 +35,22 @@ public class FuncionarioController {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
         String timeFormated = LocalDateTime.now().format(formatter);
+        String cpf = novoFuncionario.getCpfFuncionario();
 
         if (empresaRepository.existsById(idEmpresa)) {
+            System.out.printf("\n\n[ LOG ] - [%s] --- Criando o funcionario...", timeFormated);
+
             try {
-                System.out.printf("\n\n[ LOG ] - [%s] --- Criando o funcionario...", timeFormated);
+                if (!funcionarioRepository.existsByCpfFuncionario(cpf)) {
+                    funcionarioRepository.save(novoFuncionario);
+                    System.out.printf("\n[ LOG ] - [%s] --- Funcionario criado com sucesso.", timeFormated);
+                    return status(HttpStatus.CREATED).build();
+                }
 
-                funcionarioRepository.save(novoFuncionario);
-
-                System.out.printf("\n[ LOG ] - [%s] --- Funcionario criado com sucesso.", timeFormated);
-                return status(HttpStatus.CREATED).build();
+                System.out.printf("\n\n[ LOG ] - [%s] --- Funcionário já existe.", timeFormated);
+                return status(HttpStatus.NOT_FOUND).body(
+                        ("Esse funcionário já existe.")
+                );
 
             } catch (RuntimeException ex) {
                 System.out.printf("\n[ LOG ] - [%s] --- Falha ao criar o funcionario.", timeFormated);

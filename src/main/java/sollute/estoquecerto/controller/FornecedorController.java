@@ -35,15 +35,22 @@ public class FornecedorController {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
         String timeFormated = LocalDateTime.now().format(formatter);
+        String telefone = novoFornecedor.getTelefoneFornecedor();
 
         if (empresaRepository.existsById(idEmpresa)) {
             try {
                 System.out.printf("\n\n[ LOG ] - [%s] --- Criando o fornecedor...", timeFormated);
 
-                fornecedorRepository.save(novoFornecedor);
+                if (!fornecedorRepository.existsByTelefoneFornecedor(telefone)) {
+                    fornecedorRepository.save(novoFornecedor);
+                    System.out.printf("\n[ LOG ] - [%s] --- Fornecedor criado com sucesso.", timeFormated);
+                    return status(HttpStatus.CREATED).build();
+                }
 
-                System.out.printf("\n[ LOG ] - [%s] --- Fornecedor criado com sucesso.", timeFormated);
-                return status(HttpStatus.CREATED).build();
+                System.out.printf("\n\n[ LOG ] - [%s] --- Fornecedor já existe.", timeFormated);
+                return status(HttpStatus.NOT_FOUND).body(
+                        ("Esse fornecedor já existe.")
+                );
 
             } catch (RuntimeException ex) {
                 System.out.printf("\n[ LOG ] - [%s] --- Falha ao criar o fornecedor.", timeFormated);
