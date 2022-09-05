@@ -11,6 +11,8 @@ import sollute.estoquecerto.request.fornecedores.NovoFornecedorRequest;
 
 import javax.validation.Valid;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.springframework.http.ResponseEntity.status;
@@ -26,38 +28,71 @@ public class FornecedorController {
     private FornecedorRepository fornecedorRepository;
 
     @PostMapping("/criar-fornecedor/{idEmpresa}")
-    public ResponseEntity<ResponseEntity.BodyBuilder> criarFornecedor(@RequestBody @Valid Fornecedor novoFornecedor,
-                                                                      @PathVariable Integer idEmpresa) {
+    public ResponseEntity criarFornecedor(
+            @RequestBody @Valid Fornecedor novoFornecedor,
+            @PathVariable Integer idEmpresa
+    ) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        String timeFormated = LocalDateTime.now().format(formatter);
 
         if (empresaRepository.existsById(idEmpresa)) {
-            fornecedorRepository.save(novoFornecedor);
-            return status(HttpStatus.CREATED).build();
+            try {
+                System.out.printf("\n\n[ LOG ] - [%s] --- Criando o fornecedor...", timeFormated);
+
+                fornecedorRepository.save(novoFornecedor);
+
+                System.out.printf("\n[ LOG ] - [%s] --- Fornecedor criado com sucesso.", timeFormated);
+                return status(HttpStatus.CREATED).build();
+
+            } catch (RuntimeException ex) {
+                System.out.printf("\n[ LOG ] - [%s] --- Falha ao criar o fornecedor.", timeFormated);
+                return status(HttpStatus.BAD_REQUEST).body(ex.toString());
+            }
+
         }
 
-        return status(HttpStatus.NOT_FOUND).build();
+        return status(HttpStatus.BAD_REQUEST).body(
+                ("Essa empresa não existe.")
+        );
     }
 
     @GetMapping("/listar-fornecedores/{idEmpresa}")
-    public ResponseEntity<List<Fornecedor>> listarFornecedores(@PathVariable Integer idEmpresa) {
+    public ResponseEntity<List<Fornecedor>> listarFornecedores(
+            @PathVariable Integer idEmpresa
+    ) {
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        String timeFormated = LocalDateTime.now().format(formatter);
+
+        System.out.printf("\n\n[ LOG ] - [%s] --- Iniciando listagem dos fornecedores...", timeFormated);
         List<Fornecedor> lista = fornecedorRepository.findByfkEmpresaIdEmpresa(idEmpresa);
 
-        if (lista.isEmpty()) return status(HttpStatus.NO_CONTENT).build();
+        if (lista.isEmpty()) {
+            System.out.printf("\n[ LOG ] - [%s] --- Não há fornecedores cadastrados.", timeFormated);
+            return status(HttpStatus.NO_CONTENT).build();
+        }
 
-        return status(HttpStatus.OK).body(lista);
-
+        System.out.printf("\n[ LOG ] - [%s] --- Listando fornecedores.", timeFormated);
+        return status(200).body(lista);
     }
 
     @PutMapping("/editar-fornecedor/{idEmpresa}/{idFornecedor}")
-    public ResponseEntity<ResponseEntity.BodyBuilder> editarFornecedor(
+    public ResponseEntity editarFornecedor(
             @RequestBody @Valid NovoFornecedorRequest novoFornecedorRequest,
             @PathVariable Integer idEmpresa,
             @PathVariable Long idFornecedor) {
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        String timeFormated = LocalDateTime.now().format(formatter);
         List<Fornecedor> lista = fornecedorRepository.findByfkEmpresaIdEmpresa(idEmpresa);
 
-        if (lista.isEmpty()) return status(HttpStatus.BAD_REQUEST).build();
+        if (lista.isEmpty()) {
+            System.out.printf("\n[ LOG ] - [%s] --- Não há fornecedores cadastrados.", timeFormated);
+            return status(HttpStatus.BAD_REQUEST).build();
+        }
 
+        System.out.printf("\n\n[ LOG ] - [%s] --- Iniciando edição do fornecedor...", timeFormated);
         if (fornecedorRepository.existsById(idFornecedor)) {
 
             String nome = novoFornecedorRequest.getNomeFornecedor();
@@ -65,30 +100,51 @@ public class FornecedorController {
             String prod = novoFornecedorRequest.getNomeProduto();
             Integer qtd = novoFornecedorRequest.getQtdFornecida();
 
+            System.out.printf("\n\n[ LOG ] - [%s] --- Editando as informações do fornecedor...", timeFormated);
             fornecedorRepository.atualizarFornecedor(nome, telefone, prod, qtd, idEmpresa, idFornecedor);
+            System.out.printf("\n\n[ LOG ] - [%s] --- Informações editadas com sucesso.", timeFormated);
 
             return status(HttpStatus.OK).build();
 
         }
 
-        return status(HttpStatus.NOT_FOUND).build();
+        System.out.printf("\n\n[ LOG ] - [%s] --- Fornecedor não existe.", timeFormated);
+        return status(HttpStatus.NOT_FOUND).body(
+                ("Esse Fornecedor não existe.")
+        );
     }
 
     @DeleteMapping("/deletar-fornecedor/{idFornecedor}/{idEmpresa}")
-    public ResponseEntity<ResponseEntity.BodyBuilder> deletarFornecedor(@PathVariable Integer idFornecedor,
-                                                                        @PathVariable Integer idEmpresa) {
+    public ResponseEntity deletarFornecedor(
+            @PathVariable Integer idFornecedor,
+            @PathVariable Integer idEmpresa
+    ) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        String timeFormated = LocalDateTime.now().format(formatter);
 
         if (empresaRepository.existsById(idEmpresa)) {
+            try {
+                System.out.printf("\n\n[ LOG ] - [%s] --- Excluindo o fornecedor do banco de dados", timeFormated);
 
-            if (fornecedorRepository.existsById(idFornecedor.longValue())) {
-                fornecedorRepository.deleteByIdFornecedorAndFkEmpresaIdEmpresa(idFornecedor, idEmpresa);
-                return status(HttpStatus.OK).build();
+                if (fornecedorRepository.existsById(idFornecedor.longValue())) {
+                    fornecedorRepository.deleteByIdFornecedorAndFkEmpresaIdEmpresa(idFornecedor, idEmpresa);
+                    System.out.printf("\n[ LOG ] - [%s] --- Fornecedor excluido com sucesso", timeFormated);
+                    return status(HttpStatus.OK).build();
+                }
+
+                System.out.printf("\n\n[ LOG ] - [%s] --- Fornecedor não existe.", timeFormated);
+                return status(HttpStatus.NOT_FOUND).body(
+                        ("Esse fornecedor não existe.")
+                );
+
+            } catch (RuntimeException ex) {
+                System.out.printf("\n[ LOG ] - [%s] --- Falha ao excluir o fornecedor", timeFormated);
+                return status(HttpStatus.BAD_REQUEST).body(ex.toString());
             }
 
-            return status(HttpStatus.BAD_REQUEST).build();
         }
 
-        return status(HttpStatus.NOT_FOUND).build();
+        return status(HttpStatus.BAD_REQUEST).build();
     }
-
 }

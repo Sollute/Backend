@@ -36,7 +36,6 @@ public class Fornecedor {
     @Column(name = "nome_produto")
     private String nomeProduto;
 
-    @NotBlank
     @Positive
     @Column(name = "qtd_fornecidas")
     private Integer qtd;
