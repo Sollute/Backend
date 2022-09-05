@@ -21,12 +21,10 @@ public class Carrinho {
     @JoinColumn(name = "fk_produto")
     private Produto fkProduto;
 
-    @NotBlank
     @PositiveOrZero
     @Column(name = "qtd_venda")
     private Integer qtdVenda;
 
-    @NotBlank
     @PositiveOrZero
     @Column(name = "valor_venda")
     private Double valorVenda;

@@ -36,11 +36,9 @@ public class Empresa {
     @CNPJ(message = "Insira um CNPJ valido!")
     private String cnpj;
 
-    @NotBlank
     @Column(name = "qtd_produtos_vendidos")
     private int qtdProdutosVendidos;
 
-    @NotBlank
     @Column(name = "total_produtos_vendidos")
     private double totalProdutosVendidos;
 

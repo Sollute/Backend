@@ -20,7 +20,9 @@ public class CaixaController {
     private CaixaRepository caixaRepository;
 
     @GetMapping("/pegar-saldo/{idEmpresa}")
-    public ResponseEntity<Double> getValor(@PathVariable Integer idEmpresa) {
+    public ResponseEntity<Double> getValor(
+            @PathVariable Integer idEmpresa
+    ) {
 
         boolean empresa = empresaRepository.existsById(idEmpresa);
 
@@ -34,8 +36,10 @@ public class CaixaController {
     }
 
     @PutMapping("/adicionar-valor-caixa/{idEmpresa}/{valor}")
-    public ResponseEntity<Double> creditarValor(@PathVariable Integer idEmpresa,
-                                                @PathVariable Double valor) {
+    public ResponseEntity<Double> creditarValor(
+            @PathVariable Integer idEmpresa,
+            @PathVariable Double valor
+    ) {
 
         boolean empresa = empresaRepository.existsById(idEmpresa);
 
@@ -55,8 +59,10 @@ public class CaixaController {
     }
 
     @PutMapping("/remover-valor-caixa/{idEmpresa}/{valor}")
-    public ResponseEntity<Double> debitarValor(@PathVariable Integer idEmpresa,
-                                               @PathVariable Double valor) {
+    public ResponseEntity<Double> debitarValor(
+            @PathVariable Integer idEmpresa,
+            @PathVariable Double valor
+    ) {
 
         boolean empresa = empresaRepository.existsById(idEmpresa);
 

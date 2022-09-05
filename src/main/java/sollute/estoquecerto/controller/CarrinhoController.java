@@ -35,9 +35,11 @@ public class CarrinhoController {
 
     // TODO :: PRECISA REFATORAR ESSE MÉTODO PARA EVITAR CRIAR UM CARRINHO PARA CADA PRODUTO!!!
     @PostMapping("/adicionar-carrinho/{cnpj}/{codigo}/{qtdProduto}")
-    public ResponseEntity addCarrinho(@PathVariable String cnpj,
-                                      @PathVariable String codigo,
-                                      @PathVariable Integer qtdProduto) {
+    public ResponseEntity addCarrinho(
+            @PathVariable String cnpj,
+            @PathVariable String codigo,
+            @PathVariable Integer qtdProduto
+    ) {
 
         boolean existsEmpresa = empresaRepository.existsByCnpj(cnpj);
         int qtdEstoque = produtoRepository.findProdutoByCodigo(codigo).getEstoque();
@@ -64,7 +66,9 @@ public class CarrinhoController {
     }
 
     @GetMapping("/listar-produtos-carrinho/{fkEmpresa}")
-    public ResponseEntity listCarrinho(@PathVariable Integer fkEmpresa) {
+    public ResponseEntity listCarrinho(
+            @PathVariable Integer fkEmpresa
+    ) {
 
         List<Carrinho> lista = carrinhoRepository.findByFkEmpresaIdEmpresa(fkEmpresa);
 
@@ -75,7 +79,9 @@ public class CarrinhoController {
 
     @PutMapping("/vender-produtos-carrinho/{fkEmpresa}")
     @Transactional
-    public ResponseEntity<ResponseEntity.BodyBuilder> venderCarrinho(@PathVariable Integer fkEmpresa) {
+    public ResponseEntity venderCarrinho(
+            @PathVariable Integer fkEmpresa
+    ) {
 
         if (empresaRepository.existsById(fkEmpresa)) {
 
@@ -115,8 +121,10 @@ public class CarrinhoController {
     }
 
     @DeleteMapping("/carrinho-apagar-produto/{codigo}/{fkEmpresa}")
-    public ResponseEntity<ResponseEntity.BodyBuilder> apagarProdutoCarrinho(@PathVariable String codigo,
-                                                                            @PathVariable Integer fkEmpresa) {
+    public ResponseEntity apagarProdutoCarrinho(
+            @PathVariable String codigo,
+            @PathVariable Integer fkEmpresa
+    ) {
 
         List<Carrinho> lista = carrinhoRepository.findByFkEmpresaIdEmpresa(fkEmpresa);
 
@@ -136,9 +144,11 @@ public class CarrinhoController {
     }
 
     @PutMapping("/atualizar-carrinho/{codigo}/{idEmpresa}/{qtdVenda}")
-    public ResponseEntity<ResponseEntity.BodyBuilder> atualizaCarrinho(@PathVariable String codigo,
-                                                                       @PathVariable Integer idEmpresa,
-                                                                       @PathVariable Integer qtdVenda) {
+    public ResponseEntity atualizaCarrinho(
+            @PathVariable String codigo,
+            @PathVariable Integer idEmpresa,
+            @PathVariable Integer qtdVenda
+    ) {
 
         List<Carrinho> lista = carrinhoRepository.findByFkEmpresaIdEmpresa(idEmpresa);
 

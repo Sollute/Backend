@@ -36,7 +36,6 @@ public class Funcionario {
     @Column(name = "telefone_funcionario")
     private String telefoneFuncionario;
 
-    @NotBlank
     @Positive
     @Column(name = "salario_funcionario")
     private Double salarioFuncionario;
