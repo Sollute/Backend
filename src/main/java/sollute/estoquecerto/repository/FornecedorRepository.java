@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface FornecedorRepository extends JpaRepository<Fornecedor, Long> {
 
+    Boolean existsByTelefoneFornecedor(String telefoneFornecedor);
+
     List<Fornecedor> findByfkEmpresaIdEmpresa(Integer idEmpresa);
 
     @Transactional

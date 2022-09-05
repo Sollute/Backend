@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface FuncionarioRepository extends JpaRepository<Funcionario, Integer> {
 
+    Boolean existsByCpfFuncionario(String cpfFuncionario);
+
     List<Funcionario> findByFkEmpresaIdEmpresa(Integer idEmpresa);
 
     @Transactional
