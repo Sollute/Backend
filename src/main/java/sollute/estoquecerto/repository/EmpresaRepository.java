@@ -10,6 +10,8 @@ public interface EmpresaRepository extends JpaRepository<Empresa, Integer> {
 
     Empresa findByCnpj(String cnpj);
 
+    Empresa findByIdEmpresa(Integer idEmpresa);
+
     boolean existsByCnpj(String cnpj);
 
     @Transactional
