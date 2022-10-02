@@ -1,5 +1,6 @@
 package sollute.estoquecerto.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
@@ -14,7 +15,7 @@ public class Produto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idProduto;
 
-    @NotNull
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "fk_empresa")
     private Empresa fkEmpresa;

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sollute.estoquecerto.entity.Empresa;
 import sollute.estoquecerto.entity.Produto;
 import sollute.estoquecerto.repository.EmpresaRepository;
 import sollute.estoquecerto.repository.ProdutoRepository;
@@ -13,6 +14,7 @@ import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.http.ResponseEntity.status;
 
@@ -39,6 +41,7 @@ public class ProdutoController {
             try {
                 System.out.printf("\n\n[ LOG ] - [%s] --- Criando o produto...", timeFormated);
 
+                novoProduto.setFkEmpresa(empresaRepository.findByIdEmpresa(idEmpresa));
                 produtoRepository.save(novoProduto);
 
                 System.out.printf("\n[ LOG ] - [%s] --- Produto criado com sucesso.", timeFormated);
