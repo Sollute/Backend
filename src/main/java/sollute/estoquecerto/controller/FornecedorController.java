@@ -42,6 +42,7 @@ public class FornecedorController {
                 System.out.printf("\n\n[ LOG ] - [%s] --- Criando o fornecedor...", timeFormated);
 
                 if (!fornecedorRepository.existsByTelefoneFornecedor(telefone)) {
+                    novoFornecedor.setFkEmpresa(empresaRepository.findByIdEmpresa(idEmpresa));
                     fornecedorRepository.save(novoFornecedor);
                     System.out.printf("\n[ LOG ] - [%s] --- Fornecedor criado com sucesso.", timeFormated);
                     return status(HttpStatus.CREATED).build();
