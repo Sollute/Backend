@@ -42,6 +42,7 @@ public class FuncionarioController {
 
             try {
                 if (!funcionarioRepository.existsByCpfFuncionario(cpf)) {
+                    novoFuncionario.setFkEmpresa(empresaRepository.findByIdEmpresa(idEmpresa));
                     funcionarioRepository.save(novoFuncionario);
                     System.out.printf("\n[ LOG ] - [%s] --- Funcionario criado com sucesso.", timeFormated);
                     return status(HttpStatus.CREATED).build();

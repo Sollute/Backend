@@ -42,6 +42,7 @@ public class ClienteController {
             try {
 
                 if (!clienteRepository.existsByTelefoneCliente(telefone)) {
+                    novoCliente.setFkEmpresa(empresaRepository.findByIdEmpresa(idEmpresa));
                     clienteRepository.save(novoCliente);
                     System.out.printf("\n[ LOG ] - [%s] --- Cliente criado com sucesso.", timeFormated);
                     return status(HttpStatus.CREATED).build();
