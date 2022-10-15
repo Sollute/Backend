@@ -6,7 +6,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
-@Entity
+@Entity(name = "Produto")
 @Table(name = "produto")
 public class Produto {
 
