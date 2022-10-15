@@ -4,17 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sollute.estoquecerto.entity.Empresa;
 import sollute.estoquecerto.entity.Produto;
 import sollute.estoquecerto.repository.EmpresaRepository;
 import sollute.estoquecerto.repository.ProdutoRepository;
 import sollute.estoquecerto.request.produtos.NovoProdutoRequest;
+import sollute.estoquecerto.responses.produtos.ListaProdutosResponse;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
 
 import static org.springframework.http.ResponseEntity.status;
 
@@ -69,6 +68,26 @@ public class ProdutoController {
 
         System.out.printf("\n\n[ LOG ] - [%s] --- Iniciando listagem dos produtos...", timeFormated);
         List<Produto> lista = produtoRepository.findByFkEmpresaIdEmpresaOrderByEstoqueDesc(idEmpresa);
+
+        if (lista.isEmpty()) {
+            System.out.printf("\n[ LOG ] - [%s] --- Não há produtos cadastrados.", timeFormated);
+            return status(204).build();
+        }
+
+        System.out.printf("\n[ LOG ] - [%s] --- Listando produtos.", timeFormated);
+        return status(200).body(lista);
+    }
+
+    @GetMapping("/listar-produtos-android/{idEmpresa}")
+    public ResponseEntity<List<ListaProdutosResponse>> listarProdutosAndroid(
+            @PathVariable Integer idEmpresa
+    ) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        String timeFormated = LocalDateTime.now().format(formatter);
+
+        System.out.printf("\n\n[ LOG ] - [%s] --- Iniciando listagem dos produtos...", timeFormated);
+        List<ListaProdutosResponse> lista = produtoRepository.listarProdutosAndroid(idEmpresa);
 
         if (lista.isEmpty()) {
             System.out.printf("\n[ LOG ] - [%s] --- Não há produtos cadastrados.", timeFormated);
