@@ -16,6 +16,8 @@ public interface ProdutoRepository extends JpaRepository<Produto, Integer> {
 
     boolean existsByCodigo(String codigo);
 
+    boolean existsByNome(String nome);
+
     List<Produto> findByFkEmpresaIdEmpresa(Integer idEmpresa);
 
     List<Produto> findByFkEmpresaIdEmpresaOrderByEstoqueDesc(Integer idEmpresa);
@@ -24,6 +26,9 @@ public interface ProdutoRepository extends JpaRepository<Produto, Integer> {
 
     @Transactional
     void deleteProdutoByCodigoAndFkEmpresaIdEmpresa(String codigo, Integer idEmpresa);
+
+    @Transactional
+    void deleteProdutoByNomeAndFkEmpresaIdEmpresa(String nome, Integer idEmpresa);
 
     @Transactional
     @Modifying
@@ -48,6 +53,20 @@ public interface ProdutoRepository extends JpaRepository<Produto, Integer> {
                           Double precoCompra,
                           Double precoVenda,
                           String codigo,
+                          Integer fkEmpresa
+    );
+
+    @Transactional
+    @Modifying
+    @Query("update Produto p " +
+            "set p.estoque = ?1, p.estoqueMin = ?2, p.estoqueMax = ?3, p.precoCompra = ?4, p.precoVenda = ?5 " +
+            "where p.nome = ?6 and p.fkEmpresa.idEmpresa = ?7 ")
+    void atualizarProdutoPorNome(Integer estoque,
+                          Integer estoqueMin,
+                          Integer estoqueMax,
+                          Double precoCompra,
+                          Double precoVenda,
+                          String nome,
                           Integer fkEmpresa
     );
 

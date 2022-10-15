@@ -1,7 +1,6 @@
 package sollute.estoquecerto.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sollute.estoquecerto.entity.Produto;
@@ -16,6 +15,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.ResponseEntity.status;
 
 @RestController
@@ -41,20 +41,26 @@ public class ProdutoController {
             try {
                 System.out.printf("\n\n[ LOG ] - [%s] --- Criando o produto...", timeFormated);
 
-                novoProduto.setFkEmpresa(empresaRepository.findByIdEmpresa(idEmpresa));
-                produtoRepository.save(novoProduto);
+                if ((produtoRepository.existsByCodigo(novoProduto.getCodigo())) || (produtoRepository.existsByNome(novoProduto.getNome()))) {
+                    System.out.printf("\n[ LOG ] - [%s] --- Código ou nome já existe. Por favor, escolha outro", timeFormated);
+                    return status(409).build();
+                } else {
+                    novoProduto.setFkEmpresa(empresaRepository.findByIdEmpresa(idEmpresa));
+                    produtoRepository.save(novoProduto);
 
-                System.out.printf("\n[ LOG ] - [%s] --- Produto criado com sucesso.", timeFormated);
-                return status(201).build();
+                    System.out.printf("\n[ LOG ] - [%s] --- Produto criado com sucesso.", timeFormated);
+                    return status(201).build();
+
+                }
 
             } catch (RuntimeException ex) {
                 System.out.printf("\n[ LOG ] - [%s] --- Falha ao criar o produto.", timeFormated);
-                return status(HttpStatus.BAD_REQUEST).body(ex.toString());
+                return status(BAD_REQUEST).body(ex.toString());
             }
 
         }
 
-        return status(HttpStatus.BAD_REQUEST).body(
+        return status(BAD_REQUEST).body(
                 ("Esse produto já existe.")
         );
     }
@@ -159,7 +165,52 @@ public class ProdutoController {
         }
 
         System.out.printf("\n\n[ LOG ] - [%s] --- Produto não existe.", timeFormated);
-        return status(HttpStatus.NOT_FOUND).body(
+        return status(NOT_FOUND).body(
+                ("Esse produto não existe.")
+        );
+    }
+
+    @PutMapping("/editar-produto-nome/{idEmpresa}/{nome}")
+    public ResponseEntity editarProdutoPorNome(
+            @RequestBody @Valid NovoProdutoRequest novoProdutoRequest,
+            @PathVariable Integer idEmpresa,
+            @PathVariable String nome
+    ) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        String timeFormated = LocalDateTime.now().format(formatter);
+        List<Produto> lista = produtoRepository.findByFkEmpresaIdEmpresa(idEmpresa);
+
+        if (lista.isEmpty()) {
+            System.out.printf("\n[ LOG ] - [%s] --- Não há produtos cadastrados.", timeFormated);
+            return status(400).build();
+        }
+
+        System.out.printf("\n\n[ LOG ] - [%s] --- Iniciando edição do produto por nome...", timeFormated);
+        if (produtoRepository.existsByNome(nome)) {
+
+            Integer estoque = novoProdutoRequest.getEstoque();
+            Integer estoqueMin = novoProdutoRequest.getEstoqueMin();
+            Integer estoqueMax = novoProdutoRequest.getEstoqueMax();
+            Double precoCompra = novoProdutoRequest.getPrecoCompra();
+            Double precoVenda = novoProdutoRequest.getPrecoVenda();
+
+            System.out.printf("\n\n[ LOG ] - [%s] --- Editando as informações do produto por nome...", timeFormated);
+            produtoRepository.atualizarProduto(
+                    estoque,
+                    estoqueMin,
+                    estoqueMax,
+                    precoCompra,
+                    precoVenda,
+                    nome,
+                    idEmpresa);
+
+            System.out.printf("\n\n[ LOG ] - [%s] --- Informações editadas com sucesso.", timeFormated);
+            return status(200).build();
+        }
+
+        System.out.printf("\n\n[ LOG ] - [%s] --- Produto não existe.", timeFormated);
+        return status(NOT_FOUND).body(
                 ("Esse produto não existe.")
         );
     }
@@ -183,18 +234,51 @@ public class ProdutoController {
                 }
 
                 System.out.printf("\n\n[ LOG ] - [%s] --- Produto não existe.", timeFormated);
-                return status(HttpStatus.NOT_FOUND).body(
+                return status(NOT_FOUND).body(
                         ("Esse produto não existe.")
                 );
 
             } catch (RuntimeException ex) {
                 System.out.printf("\n[ LOG ] - [%s] --- Falha ao excluir o produto", timeFormated);
-                return status(HttpStatus.BAD_REQUEST).body(ex.toString());
+                return status(BAD_REQUEST).body(ex.toString());
             }
 
         }
 
-        return status(HttpStatus.BAD_REQUEST).build();
+        return status(BAD_REQUEST).build();
+    }
+
+    @DeleteMapping("/deletar-produto-nome/{nome}/{fkEmpresa}")
+    public ResponseEntity deletarProdutoPorNome(
+            @PathVariable String nome,
+            @PathVariable Integer fkEmpresa
+    ) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        String timeFormated = LocalDateTime.now().format(formatter);
+
+        if (empresaRepository.existsById(fkEmpresa)) {
+            try {
+                System.out.printf("\n\n[ LOG ] - [%s] --- Excluindo o produto do banco de dados", timeFormated);
+                if (produtoRepository.existsByNome(nome)) {
+
+                    produtoRepository.deleteProdutoByNomeAndFkEmpresaIdEmpresa(nome, fkEmpresa);
+                    return status(200).build();
+                }
+
+                System.out.printf("\n\n[ LOG ] - [%s] --- Produto não existe.", timeFormated);
+                return status(NOT_FOUND).body(
+                        ("Esse produto não existe.")
+                );
+
+            } catch (RuntimeException ex) {
+                System.out.printf("\n[ LOG ] - [%s] --- Falha ao excluir o produto", timeFormated);
+                return status(BAD_REQUEST).body(ex.toString());
+            }
+
+        }
+
+        return status(BAD_REQUEST).build();
     }
 
     @GetMapping("/info/{nome}/{fkEmpresa}")
