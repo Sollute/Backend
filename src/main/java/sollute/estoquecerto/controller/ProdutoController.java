@@ -196,7 +196,7 @@ public class ProdutoController {
             Double precoVenda = novoProdutoRequest.getPrecoVenda();
 
             System.out.printf("\n\n[ LOG ] - [%s] --- Editando as informações do produto por nome...", timeFormated);
-            produtoRepository.atualizarProduto(
+            produtoRepository.atualizarProdutoPorNome(
                     estoque,
                     estoqueMin,
                     estoqueMax,
