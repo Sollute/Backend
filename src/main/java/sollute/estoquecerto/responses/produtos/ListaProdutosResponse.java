@@ -12,10 +12,6 @@ public class ListaProdutosResponse {
         this.productQuantity = productQuantity;
     }
 
-//    public String getProductPhoto() {
-//        return productPhoto;
-//    }
-
     public String getProductName() {
         return productName;
     }
@@ -27,10 +23,6 @@ public class ListaProdutosResponse {
     public Integer getProductQuantity() {
         return productQuantity;
     }
-
-//    public void setProductPhoto(String productPhoto) {
-//        this.productPhoto = productPhoto;
-//    }
 
     public void setProductName(String productName) {
         this.productName = productName;
