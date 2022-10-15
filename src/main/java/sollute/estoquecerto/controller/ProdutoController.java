@@ -9,6 +9,7 @@ import sollute.estoquecerto.repository.EmpresaRepository;
 import sollute.estoquecerto.repository.ProdutoRepository;
 import sollute.estoquecerto.request.produtos.NovoProdutoRequest;
 import sollute.estoquecerto.responses.produtos.ListaProdutosResponse;
+import sollute.estoquecerto.responses.produtos.ProdutoResponse;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
@@ -194,5 +195,26 @@ public class ProdutoController {
         }
 
         return status(HttpStatus.BAD_REQUEST).build();
+    }
+
+    @GetMapping("/info/{nome}/{fkEmpresa}")
+    public ResponseEntity getInfoProduct(
+            @PathVariable String nome,
+            @PathVariable Integer fkEmpresa
+    ) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        String timeFormated = LocalDateTime.now().format(formatter);
+
+        System.out.printf("\n\n[ LOG ] - [%s] --- Iniciando coleta de informações do produto...", timeFormated);
+        ProdutoResponse product = produtoRepository.getInfoByNameAndFkEmpresa(nome, fkEmpresa);
+
+        if (product == null) {
+            System.out.printf("\n[ LOG ] - [%s] --- Produto não existe", timeFormated);
+            return status(204).build();
+        }
+
+        System.out.printf("\n[ LOG ] - [%s] --- Retornando informações do produto.", timeFormated);
+        return status(200).body(product);
     }
 }

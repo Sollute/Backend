@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 import sollute.estoquecerto.entity.Produto;
 import sollute.estoquecerto.responses.produtos.ListaProdutosResponse;
+import sollute.estoquecerto.responses.produtos.ProdutoResponse;
 
 import java.util.List;
 
@@ -50,7 +51,13 @@ public interface ProdutoRepository extends JpaRepository<Produto, Integer> {
                           Integer fkEmpresa
     );
 
-    @Query("select new sollute.estoquecerto.responses.produtos.ListaProdutosResponse(p.nome, p.precoVenda, p.estoque) from Produto p where p.fkEmpresa.idEmpresa like ?1")
+    @Query("select new sollute.estoquecerto.responses.produtos.ListaProdutosResponse(" +
+            "p.nome, p.precoVenda, p.estoque) " +
+            "from Produto p where p.fkEmpresa.idEmpresa like ?1")
     List<ListaProdutosResponse> listarProdutosAndroid(Integer idEmpresa);
 
+    @Query("select new sollute.estoquecerto.responses.produtos.ProdutoResponse(" +
+            "p.estoque, p.estoqueMin, p.estoqueMax, p.precoCompra, p.precoVenda) " +
+            "from Produto p where p.nome like ?1 and p.fkEmpresa.idEmpresa like ?2")
+    ProdutoResponse getInfoByNameAndFkEmpresa(String nome, Integer fkEmpresa);
 }
