@@ -76,7 +76,7 @@ public class EmpresaController {
                 empresaRepository.atualizarAutenticado(requisicao.getLogin(), true);
 
                 System.out.printf("\n[ LOG ] - [%s] --- Usuário autenticado com sucesso.", timeFormated);
-                return status(HttpStatus.OK).body(e);
+                return status(HttpStatus.OK).body(e.getIdEmpresa());
 
             } else {
                 System.out.printf("\n[ LOG ] - [%s] --- Credenciais incorretas.", timeFormated);
