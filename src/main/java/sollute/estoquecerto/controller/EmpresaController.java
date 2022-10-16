@@ -76,7 +76,39 @@ public class EmpresaController {
                 empresaRepository.atualizarAutenticado(requisicao.getLogin(), true);
 
                 System.out.printf("\n[ LOG ] - [%s] --- Usuário autenticado com sucesso.", timeFormated);
-                return status(HttpStatus.OK).body(e.getIdEmpresa());
+                return status(HttpStatus.OK).body(e);
+
+            } else {
+                System.out.printf("\n[ LOG ] - [%s] --- Credenciais incorretas.", timeFormated);
+                return status(HttpStatus.UNAUTHORIZED).build();
+            }
+        }
+
+        System.out.printf("\n\n[ LOG ] - [%s] --- Não há empresas cadastradas", timeFormated);
+        return status(HttpStatus.NO_CONTENT).body("Não há empresas cadastradas");
+    }
+
+    @PostMapping("/autenticacao-android")
+    public ResponseEntity postAutenticadoAndroid(
+            @RequestBody @Valid EmpresaLoginRequest requisicao
+    ) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        String timeFormated = LocalDateTime.now().format(formatter);
+
+        List<Empresa> empresa = empresaRepository.findAll();
+
+        for (Empresa e : empresa) {
+            System.out.printf("\n\n[ LOG ] - [%s] --- Iniciando autenticação...", timeFormated);
+
+            if (e.getEmail().equals(requisicao.getLogin()) && e.getSenha().equals(requisicao.getSenha())) {
+
+                System.out.printf("\n\n[ LOG ] - [%s] --- Autenticando usuário...", timeFormated);
+                empresaRepository.atualizarAutenticado(requisicao.getLogin(), true);
+
+                System.out.printf("\n[ LOG ] - [%s] --- Usuário autenticado com sucesso.", timeFormated);
+                System.out.println(e.getIdEmpresa());
+                return status(HttpStatus.OK).body(empresaRepository.getId(e.getCnpj()));
 
             } else {
                 System.out.printf("\n[ LOG ] - [%s] --- Credenciais incorretas.", timeFormated);
