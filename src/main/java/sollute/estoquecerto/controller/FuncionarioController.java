@@ -49,7 +49,7 @@ public class FuncionarioController {
                 }
 
                 System.out.printf("\n\n[ LOG ] - [%s] --- Funcionário já existe.", timeFormated);
-                return status(HttpStatus.NOT_FOUND).body(
+                return status(409).body(
                         ("Esse funcionário já existe.")
                 );
 
