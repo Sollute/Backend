@@ -18,6 +18,9 @@ public interface FuncionarioRepository extends JpaRepository<Funcionario, Intege
     void deleteByIdFuncionarioAndFkEmpresaIdEmpresa(Integer idFuncionario, Integer fkEmpresa);
 
     @Transactional
+    void deleteByCpfFuncionarioAndFkEmpresaIdEmpresa(String cpfFuncionario, Integer fkEmpresa);
+
+    @Transactional
     @Modifying
     @Query("update Funcionario f " +
             "set f.nomeFuncionario = ?1, f.telefoneFuncionario = ?2, f.cpfFuncionario = ?3, f.salarioFuncionario = ?4 " +
@@ -28,6 +31,18 @@ public interface FuncionarioRepository extends JpaRepository<Funcionario, Intege
                               Double salarioFuncionario,
                               Integer idEmpresa,
                               Integer idFuncionario
+    );
+
+    @Transactional
+    @Modifying
+    @Query("update Funcionario f " +
+            "set f.nomeFuncionario = ?1, f.telefoneFuncionario = ?2, f.cpfFuncionario = ?3, f.salarioFuncionario = ?4 " +
+            "where f.fkEmpresa.idEmpresa = ?5 and f.cpfFuncionario = ?3")
+    void atualizarFuncionarioCpf(String nomeFuncionario,
+                                 String telefoneFuncionario,
+                                 String cpfFuncionario,
+                                 Double salarioFuncionario,
+                                 Integer idEmpresa
     );
 
 }

@@ -123,6 +123,44 @@ public class FuncionarioController {
         );
     }
 
+    @PutMapping("/editar-funcionario-cpf/{idEmpresa}/{cpfFuncionario}")
+    public ResponseEntity editarFuncionarioCpf(
+            @RequestBody @Valid NovoFuncionarioRequest novoFuncionarioRequest,
+            @PathVariable Integer idEmpresa,
+            @PathVariable String cpfFuncionario
+    ) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        String timeFormated = LocalDateTime.now().format(formatter);
+        List<Funcionario> lista = funcionarioRepository.findByFkEmpresaIdEmpresa(idEmpresa);
+
+        if (lista.isEmpty()) {
+            System.out.printf("\n[ LOG ] - [%s] --- Não há funcionários cadastrados.", timeFormated);
+            return status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        System.out.printf("\n\n[ LOG ] - [%s] --- Iniciando edição do funcionário...", timeFormated);
+        if (funcionarioRepository.existsByCpfFuncionario(cpfFuncionario)) {
+
+            String nome = novoFuncionarioRequest.getNomeFuncionario();
+            String tele = novoFuncionarioRequest.getTelefoneFuncionario();
+            String cpf = novoFuncionarioRequest.getCpfFuncionario();
+            Double salario = novoFuncionarioRequest.getSalario();
+
+            System.out.printf("\n\n[ LOG ] - [%s] --- Editando as informações do funcionário pro CPF...", timeFormated);
+            funcionarioRepository.atualizarFuncionarioCpf(nome, tele, cpf, salario, idEmpresa);
+
+            System.out.printf("\n\n[ LOG ] - [%s] --- Informações editadas com sucesso.", timeFormated);
+            return status(HttpStatus.OK).build();
+
+        }
+
+        System.out.printf("\n\n[ LOG ] - [%s] --- Funcionário não existe.", timeFormated);
+        return status(HttpStatus.NOT_FOUND).body(
+                ("Esse funcionário não existe.")
+        );
+    }
+
     @DeleteMapping("/deletar-funcionario/{idFuncionario}/{idEmpresa}")
     public ResponseEntity deletarFuncionario(
             @PathVariable Integer idFuncionario,
@@ -139,6 +177,40 @@ public class FuncionarioController {
                 if (funcionarioRepository.existsById(idFuncionario)) {
                     funcionarioRepository.deleteByIdFuncionarioAndFkEmpresaIdEmpresa(idFuncionario, idEmpresa);
                     System.out.printf("\n[ LOG ] - [%s] --- Funcionário excluido com sucesso", timeFormated);
+                    return status(HttpStatus.OK).build();
+                }
+
+                System.out.printf("\n\n[ LOG ] - [%s] --- Funcionário não existe.", timeFormated);
+                return status(HttpStatus.NOT_FOUND).body(
+                        ("Esse funcionário não existe.")
+                );
+
+            } catch (RuntimeException ex) {
+                System.out.printf("\n[ LOG ] - [%s] --- Falha ao excluir o funcionário", timeFormated);
+                return status(HttpStatus.BAD_REQUEST).body(ex.toString());
+            }
+
+        }
+
+        return status(HttpStatus.BAD_REQUEST).build();
+    }
+
+    @DeleteMapping("/deletar-funcionario-cpf/{cpfFuncionario}/{idEmpresa}")
+    public ResponseEntity deletarFuncionarioCpf(
+            @PathVariable String cpfFuncionario,
+            @PathVariable Integer idEmpresa
+    ) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        String timeFormated = LocalDateTime.now().format(formatter);
+
+        if (empresaRepository.existsById(idEmpresa)) {
+            try {
+                System.out.printf("\n\n[ LOG ] - [%s] --- Excluindo o funcionário do banco de dados por cpf", timeFormated);
+
+                if (funcionarioRepository.existsByCpfFuncionario(cpfFuncionario)) {
+                    funcionarioRepository.deleteByCpfFuncionarioAndFkEmpresaIdEmpresa(cpfFuncionario, idEmpresa);
+                    System.out.printf("\n[ LOG ] - [%s] --- Funcionário excluido por cpf com sucesso", timeFormated);
                     return status(HttpStatus.OK).build();
                 }
 
