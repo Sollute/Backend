@@ -154,4 +154,38 @@ public class ClienteController {
 
         return status(HttpStatus.BAD_REQUEST).build();
     }
+
+    @DeleteMapping("/deletar-cliente-nome/{nomeCliente}/{idEmpresa}")
+    public ResponseEntity deletarClientePorNome(
+            @PathVariable String nomeCliente,
+            @PathVariable Integer idEmpresa
+    ) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        String timeFormated = LocalDateTime.now().format(formatter);
+
+        if (empresaRepository.existsById(idEmpresa)) {
+            try {
+                System.out.printf("\n\n[ LOG ] - [%s] --- Excluindo o cliente do banco de dados por nome", timeFormated);
+
+                if (clienteRepository.existsByNomeCliente(nomeCliente)) {
+                    clienteRepository.deleteByNomeClienteAndFkEmpresaIdEmpresa(nomeCliente, idEmpresa);
+                    System.out.printf("\n[ LOG ] - [%s] --- Cliente excluido com sucesso", timeFormated);
+                    return status(HttpStatus.OK).build();
+                }
+
+                System.out.printf("\n\n[ LOG ] - [%s] --- Cliente não existe.", timeFormated);
+                return status(HttpStatus.NOT_FOUND).body(
+                        ("Esse cliente não existe.")
+                );
+
+            } catch (RuntimeException ex) {
+                System.out.printf("\n[ LOG ] - [%s] --- Falha ao excluir o cliente", timeFormated);
+                return status(HttpStatus.BAD_REQUEST).body(ex.toString());
+            }
+
+        }
+
+        return status(HttpStatus.BAD_REQUEST).build();
+    }
 }

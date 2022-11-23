@@ -13,10 +13,15 @@ public interface ClienteRepository extends JpaRepository<Cliente, Integer> {
 
     Boolean existsByTelefoneCliente(String telefoneCliente);
 
+    Boolean existsByNomeCliente(String nomeCliente);
+
     List<Cliente> findByFkEmpresaIdEmpresa(Integer idEmpresa);
 
     @Transactional
     void deleteByIdClienteAndFkEmpresaIdEmpresa(Integer idCliente, Integer fkEmpresa);
+
+    @Transactional
+    void deleteByNomeClienteAndFkEmpresaIdEmpresa(String nomeCliente, Integer fkEmpresa);
 
     @Transactional
     @Modifying
