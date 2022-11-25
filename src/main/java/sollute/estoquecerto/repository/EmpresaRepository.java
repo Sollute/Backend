@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 import sollute.estoquecerto.entity.Empresa;
+import sollute.estoquecerto.responses.empresas.EmpresaInfoResponse;
 import sollute.estoquecerto.responses.empresas.EmpresaResponse;
 
 public interface EmpresaRepository extends JpaRepository<Empresa, Integer> {
@@ -23,4 +24,14 @@ public interface EmpresaRepository extends JpaRepository<Empresa, Integer> {
     @Query("select new sollute.estoquecerto.responses.empresas.EmpresaResponse(e.idEmpresa) " +
             "from Empresa e where e.cnpj like ?1")
     EmpresaResponse getId(String cnpj);
+
+    @Query("select new sollute.estoquecerto.responses.empresas.EmpresaInfoResponse(" +
+            "e.nomeFantasia, " +
+            "e.razaoSocial, " +
+            "e.cnpj, " +
+            "e.email, " +
+            "e.logradouro, " +
+            "e.cidade) " +
+            "from Empresa e where e.idEmpresa like ?1")
+    EmpresaInfoResponse getInfo(Integer fkEmpresa);
 }
