@@ -7,7 +7,7 @@ pipeline {
         stage('Get the new updates from GitHub') {
             steps {
                 sh "cd /Backend"
-                sh "git pull origin main"
+                sh "git pull git@github.com:Sollute/Backend.git"
             }
         }
 
