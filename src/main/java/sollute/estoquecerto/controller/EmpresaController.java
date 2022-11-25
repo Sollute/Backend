@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import sollute.estoquecerto.entity.*;
 import sollute.estoquecerto.repository.*;
 import sollute.estoquecerto.request.empresas.EmpresaLoginRequest;
+import sollute.estoquecerto.responses.empresas.EmpresaInfoResponse;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -136,6 +137,18 @@ public class EmpresaController {
 
         System.out.printf("\n[ LOG ] - [%s] --- Listando empresas.", timeFormated);
         return status(HttpStatus.OK).body(listaEmpresas);
+    }
+
+    @GetMapping("/informacoes/{fkEmpresa}")
+    public ResponseEntity getInfo(@PathVariable Integer fkEmpresa) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        String timeFormated = LocalDateTime.now().format(formatter);
+
+        System.out.printf("\n\n[ LOG ] - [%s] --- Buscando informações da empresa...", timeFormated);
+        EmpresaInfoResponse response = empresaRepository.getInfo(fkEmpresa);
+
+        System.out.printf("\n[ LOG ] - [%s] --- Retornando informações da empresa %s", timeFormated, response.getNomeFantasia());
+        return status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/deletar-empresa/{fkEmpresa}")
