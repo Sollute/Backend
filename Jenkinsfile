@@ -1,8 +1,6 @@
 pipeline {
 
-    agent {
-        image 'maven:3.3.9'
-    }
+    agent any
     
     stages {
 
