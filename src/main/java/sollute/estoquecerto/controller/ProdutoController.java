@@ -38,6 +38,7 @@ public class ProdutoController {
         String timeFormated = LocalDateTime.now().format(formatter);
 
         if (empresaRepository.existsById(idEmpresa)) {
+
             try {
                 System.out.printf("\n\n[ LOG ] - [%s] --- Criando o produto...", timeFormated);
 
