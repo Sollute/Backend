@@ -1,12 +1,9 @@
 pipeline {
 
-    agent any
-    
-    tools {
-        maven 'Maven 3.3.9'
-        jdk 'jdk8'
+    agent {
+        image 'maven:3.3.9'
     }
-
+    
     stages {
 
         stage('Get the new updates from GitHub') {
