@@ -2,6 +2,10 @@ pipeline {
 
     agent any
     
+    tools {
+        maven 'maven-for-jenkins'
+    }
+    
     stages {
 
         stage('Get the new updates from GitHub') {
