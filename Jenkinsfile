@@ -16,7 +16,7 @@ pipeline {
         stage('Deploy docker container in EC2 Instance') {
             steps {
                 sh 'pwd'
-                sh "java -jar /target/estoque-certo-1.0.jar"
+                sh "java -jar target/estoque-certo-1.0.jar"
             }
         }
     }
