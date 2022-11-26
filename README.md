@@ -52,6 +52,9 @@
 > ### Método GET 📬
 #### Listar todas as empresas `.../empresas/listar-empresas`
 #### Listar todas as informações da empresa `.../empresas/informacoes/{fkEmpresa}`
+#### Calcular os produtos vendidos da empresa `.../empresas/calcular-produtos-vendidos/{fkEmpresa}`
+#### Calcular o valor vendido da empresa `.../empresas/calcular-valor-vendidos/{fkEmpresa}`
+#### Calcular o valor liquido da empresa `.../empresas/calcular-liquido/{fkEmpresa`
 
 <br>
 
@@ -297,3 +300,11 @@
 
 > ### Método GET 📬
 #### Listar todos os extratos `.../extratos/listar-extrato/{idEmpresa}`
+
+<br>
+
+## Projetos relacionados 📁
+
+- ### [Front-End](https://github.com/Sollute/sollute-react) - FRONT END desenvolvido em ReactJS.
+- ### [Android](https://github.com/Sollute/sollute-android) - MOBILE desenvolvido em Kotlin.
+- ### [Documentação](https://github.com/Sollute/Documentacao) - DOCUMENTAÇÃO do projeto.
