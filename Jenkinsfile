@@ -10,8 +10,9 @@ pipeline {
 
         stage('Get the new updates from GitHub') {
             steps {
-                sh "cd /home/ubuntu/deploy_git_correto/Backend"
-                sh "git pull origin main"
+                dir("/home/ubuntu/deploy_git_correto/Backend") {
+                   sh "git pull origin main" 
+                }
             }
         }
 
