@@ -1,0 +1,8 @@
+[Service]
+SuccessExitStatus=143
+
+ExecStart=java -jar /var/lib/jenkins/workspace/Deploy/target/estoque-certo-1.0.jar
+ExecStop=/bin/kill -15 $MAINPID
+
+[Install]
+WantedBy=multi-user.targe
