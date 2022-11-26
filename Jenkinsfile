@@ -10,7 +10,7 @@ pipeline {
 
         stage('Build the project') {
             steps {
-                sh "mv sollute.service /etc/systemd/system"
+                sh "sudo mv sollute.service /etc/systemd/system"
                 sh "mvn clean package"
             }
         }
