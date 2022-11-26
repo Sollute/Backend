@@ -6,28 +6,27 @@ pipeline {
         maven 'maven-for-jenkins'
     }
     
-    stages {
-
-        stage('Get the new updates from GitHub') {
-            steps {
-                dir("/home/ubuntu/deploy_git_correto/") {
-                   sh "git pull origin main" 
-                }
+    stage('Get the new updates from GitHub') {
+        steps {
+            dir("/tmp/Backend") {
+               sh "git pull origin main" 
             }
         }
+    }
 
-        stage('Build the project') {
-            steps {
-                sh "cd /home/ubuntu/deploy_git_correto/"
+    stage('Build the project') {
+        steps {
+            dir("/tmp/Backend") {
                 sh "mvn clean package"
             }
         }
+    }
 
-        stage('Deploy docker container in EC2 Instance') {
+    stage('Deploy docker container in EC2 Instance') {
             steps {
-                sh "java -jar /home/ubuntu/deploy_git_correto/Backend/target/estoque-certo-1.0.jar"
-            }
+            sh "java -jar /home/ubuntu/deploy_git_correto/Backend/target/estoque-certo-1.0.jar"
         }
+    }
 
     }
 
