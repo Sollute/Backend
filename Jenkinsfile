@@ -17,7 +17,8 @@ pipeline {
         
         stage('Deploy docker container in EC2 Instance') {
             steps {
-                sh "systemctl restart sollute.service"
+                sh "sudo systemctl daemon-reload"
+                sh "sudo systemctl restart sollute.service"
             }
         }
     }
