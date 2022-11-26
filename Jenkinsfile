@@ -7,28 +7,14 @@ pipeline {
     }
     
     stages {
-
-        stage('Get the new updates from GitHub') {
+        stage('Build the project') {
             steps {
-                dir("/tmp/Backend/") {
-                    sh "git config --global --add safe.directory /tmp/Backend"
-                    sh "git pull origin main" 
-                }
+                sh "mvn clean package"
             }
         }
-
-       stage('Build the project') {
-            steps {
-                dir("/tmp/Backend/") {
-                    sh "git config --global --add safe.directory /tmp/Backend"
-                    sh "mvn clean package"
-                }
-            }
-        }
-
         stage('Deploy docker container in EC2 Instance') {
             steps {
-                sh "java -jar /home/ubuntu/deploy_git_correto/Backend/target/estoque-certo-1.0.jar"
+                sh "java -jar /target/estoque-certo-1.0.jar"
             }
         }
     }
