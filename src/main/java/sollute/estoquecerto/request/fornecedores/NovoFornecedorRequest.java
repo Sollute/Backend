@@ -11,9 +11,7 @@ public class NovoFornecedorRequest {
         return nomeFornecedor;
     }
 
-    public String getTelefoneFornecedor() {
-        return telefoneFornecedor;
-    }
+    public String getTelefoneFornecedor() {return telefoneFornecedor;}
 
     public String getNomeProduto() {
         return nomeProduto;

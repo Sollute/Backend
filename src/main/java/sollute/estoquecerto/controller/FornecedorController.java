@@ -122,6 +122,43 @@ public class FornecedorController {
         );
     }
 
+    @PutMapping("/editar-fornecedor-telefone/{idEmpresa}/{telefoneFornecedor}")
+    public ResponseEntity editarFornecedorNome(
+            @RequestBody @Valid NovoFornecedorRequest novoFornecedorRequest,
+            @PathVariable Integer idEmpresa,
+            @PathVariable String telefoneFornecedor) {
+
+        String timeFormated = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+
+        List<Fornecedor> lista = fornecedorRepository.findByfkEmpresaIdEmpresa(idEmpresa);
+
+        if (lista.isEmpty()) {
+            System.out.printf("\n[ LOG ] - [%s] --- Não há fornecedores cadastrados.", timeFormated);
+            return status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        System.out.printf("\n\n[ LOG ] - [%s] --- Iniciando edição do fornecedor por nome...", timeFormated);
+        if (fornecedorRepository.existsByTelefoneFornecedor(telefoneFornecedor)) {
+
+            String nome = novoFornecedorRequest.getNomeFornecedor();
+            String telefone = novoFornecedorRequest.getTelefoneFornecedor();
+            String prod = novoFornecedorRequest.getNomeProduto();
+            Integer qtd = novoFornecedorRequest.getQtdFornecida();
+
+            System.out.printf("\n\n[ LOG ] - [%s] --- Editando as informações do fornecedor por nome...", timeFormated);
+            fornecedorRepository.atualizarFornecedorPorNome(nome, telefone, prod, qtd, idEmpresa);
+            System.out.printf("\n\n[ LOG ] - [%s] --- Informações editadas com sucesso.", timeFormated);
+
+            return status(HttpStatus.OK).build();
+
+        }
+
+        System.out.printf("\n\n[ LOG ] - [%s] --- Fornecedor não existe.", timeFormated);
+        return status(HttpStatus.NOT_FOUND).body(
+                ("Esse Fornecedor não existe.")
+        );
+    }
+
     @DeleteMapping("/deletar-fornecedor/{idFornecedor}/{idEmpresa}")
     public ResponseEntity deletarFornecedor(
             @PathVariable Integer idFornecedor,
@@ -155,4 +192,39 @@ public class FornecedorController {
 
         return status(HttpStatus.BAD_REQUEST).build();
     }
+
+    @DeleteMapping("/deletar-fornecedor-nome/{idEmpresa}/{telefoneFornecedor}")
+    public ResponseEntity deletarFornecedorNome(
+            @PathVariable String telefoneFornecedor,
+            @PathVariable Integer idEmpresa
+    ) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        String timeFormated = LocalDateTime.now().format(formatter);
+
+        if (empresaRepository.existsById(idEmpresa)) {
+            try {
+                System.out.printf("\n\n[ LOG ] - [%s] --- Excluindo o fornecedor do banco de dados", timeFormated);
+
+                if (fornecedorRepository.existsByTelefoneFornecedor(telefoneFornecedor)) {
+                    fornecedorRepository.deleteByTelefoneFornecedorAndFkEmpresaIdEmpresa(telefoneFornecedor, idEmpresa);
+                    System.out.printf("\n[ LOG ] - [%s] --- Fornecedor excluido com sucesso", timeFormated);
+                    return status(HttpStatus.OK).build();
+                }
+
+                System.out.printf("\n\n[ LOG ] - [%s] --- Fornecedor não existe.", timeFormated);
+                return status(HttpStatus.NOT_FOUND).body(
+                        ("Esse fornecedor não existe.")
+                );
+
+            } catch (RuntimeException ex) {
+                System.out.printf("\n[ LOG ] - [%s] --- Falha ao excluir o fornecedor", timeFormated);
+                return status(HttpStatus.BAD_REQUEST).body(ex.toString());
+            }
+
+        }
+
+        return status(HttpStatus.BAD_REQUEST).build();
+    }
+
 }

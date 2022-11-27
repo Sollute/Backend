@@ -18,6 +18,9 @@ public interface FornecedorRepository extends JpaRepository<Fornecedor, Long> {
     void deleteByIdFornecedorAndFkEmpresaIdEmpresa(Integer idFornecedor, Integer fkEmpresa);
 
     @Transactional
+    void deleteByTelefoneFornecedorAndFkEmpresaIdEmpresa(String telefoneFornecedor, Integer fkEmpresa);
+
+    @Transactional
     @Modifying
     @Query("update Fornecedor f " +
             "set f.nomeFornecedor = ?1, f.telefoneFornecedor = ?2, f.nomeProduto = ?3, f.qtd = ?4 " +
@@ -28,6 +31,19 @@ public interface FornecedorRepository extends JpaRepository<Fornecedor, Long> {
                              Integer qtd,
                              Integer idEmpresa,
                              Long idFornecedor
+    );
+
+    @Transactional
+    @Modifying
+    @Query("update Fornecedor f " +
+            "set f.nomeFornecedor = ?1, f.telefoneFornecedor = ?2, f.nomeProduto = ?3, f.qtd = ?4 " +
+            "where f.fkEmpresa.idEmpresa = ?5 and f.telefoneFornecedor = ?2")
+    void atualizarFornecedorPorNome(
+            String nomeFornecedor,
+            String telefoneFornecedor,
+            String nomeProduto,
+            Integer qtd,
+            Integer idEmpresa
     );
 
 }
