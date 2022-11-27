@@ -28,7 +28,7 @@ public class Fornecedor {
     private String nomeFornecedor;
 
     @NotBlank
-    @Length(min = 10, max = 11)
+    @Length(min = 10, max = 12)
     @Column(name = "telefone_fornecedor")
     private String telefoneFornecedor;
 
