@@ -139,6 +139,11 @@ public class EmpresaController {
         return status(HttpStatus.OK).body(listaEmpresas);
     }
 
+    @GetMapping("/jenkins")
+    public ResponseEntity check() {
+        return status(HttpStatus.OK).body("JENKINS OK");
+    }
+
     @GetMapping("/informacoes/{fkEmpresa}")
     public ResponseEntity getInfo(@PathVariable Integer fkEmpresa) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
