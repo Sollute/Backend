@@ -13,6 +13,8 @@ import sollute.estoquecerto.repository.CarrinhoRepository;
 import sollute.estoquecerto.repository.EmpresaRepository;
 import sollute.estoquecerto.repository.ProdutoRepository;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.springframework.http.ResponseEntity.status;
@@ -56,6 +58,37 @@ public class CarrinhoController {
             carrinho.setFkProduto(p);
             carrinho.setQtdVenda(qtdProduto);
             carrinho.setValorVenda(qtdProduto * p.getPrecoVenda());
+
+            carrinhoRepository.save(carrinho);
+
+            return status(200).build();
+        }
+
+        return status(400).build();
+    }
+
+    @PostMapping("/adicionar-carrinho-android/{idEmpresa}/{productName}/{productQuantity}")
+    public ResponseEntity addCarrinho(
+            @PathVariable Integer idEmpresa,
+            @PathVariable String productName,
+            @PathVariable Integer productQuantity
+    ) {
+
+        boolean existsEmpresa = empresaRepository.existsById(idEmpresa);
+        int qtdEstoque = produtoRepository.findProdutoByNome(productName).getEstoque();
+
+        if (!existsEmpresa) return status(404).build();
+
+        if ((qtdEstoque - productQuantity) >= 0) {
+
+            Carrinho carrinho = new Carrinho();
+            Produto p = produtoRepository.findProdutoByNome(productName);
+            Empresa e = empresaRepository.findByIdEmpresa(idEmpresa);
+
+            carrinho.setFkEmpresa(e);
+            carrinho.setFkProduto(p);
+            carrinho.setQtdVenda(productQuantity);
+            carrinho.setValorVenda(productQuantity * p.getPrecoVenda());
 
             carrinhoRepository.save(carrinho);
 
