@@ -26,4 +26,13 @@ public interface CarrinhoRepository extends JpaRepository<Carrinho, Integer> {
                           String codigo
     );
 
+    @Transactional
+    @Modifying
+    @Query("update Carrinho c set c.qtdVenda = ?1, c.valorVenda = ?2 " +
+            "where c.fkEmpresa.idEmpresa = ?3")
+    void atualizaCarrinhoAndroid(Integer qtdVenda,
+                          Double valorVenda,
+                          Integer idEmpresa
+    );
+
 }

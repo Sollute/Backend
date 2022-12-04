@@ -176,6 +176,29 @@ public class CarrinhoController {
         return status(HttpStatus.NO_CONTENT).build();
     }
 
+    @DeleteMapping("/carrinho-apagar-produto-android/{productName}/{idEmpresa}")
+    public ResponseEntity apagarProdutoCarrinhoAndroid(
+            @PathVariable String productName,
+            @PathVariable Integer idEmpresa
+    ) {
+
+        List<Carrinho> lista = carrinhoRepository.findByFkEmpresaIdEmpresa(idEmpresa);
+
+        if (!lista.isEmpty()) {
+
+            for (Carrinho c : lista) {
+                if (c.getFkProduto().getNome().equals(productName)) {
+                    carrinhoRepository.deleteById(c.getIdCarrinho());
+                    return status(HttpStatus.OK).build();
+                }
+            }
+
+            return status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return status(HttpStatus.NO_CONTENT).build();
+    }
+
     @PutMapping("/atualizar-carrinho/{codigo}/{idEmpresa}/{qtdVenda}")
     public ResponseEntity atualizaCarrinho(
             @PathVariable String codigo,
@@ -200,6 +223,43 @@ public class CarrinhoController {
                                 novoValor,
                                 idEmpresa,
                                 codigo
+                        );
+
+                        return status(HttpStatus.OK).build();
+                    }
+                }
+
+            }
+
+            return status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        return status(HttpStatus.NOT_FOUND).build();
+    }
+
+    @PutMapping("/atualizar-carrinho-android/{productName}/{idEmpresa}/{qtdVenda}")
+    public ResponseEntity atualizaCarrinhoAndroid(
+            @PathVariable String productName,
+            @PathVariable Integer idEmpresa,
+            @PathVariable Integer qtdVenda
+    ) {
+
+        List<Carrinho> lista = carrinhoRepository.findByFkEmpresaIdEmpresa(idEmpresa);
+
+        if (!lista.isEmpty()) {
+
+            for (Carrinho c : lista) {
+                if (c.getFkProduto().getNome().equals(productName)) {
+
+                    Produto p = c.getFkProduto();
+
+                    if ((p.getEstoque() - qtdVenda) >= 0) {
+                        double novoValor = p.getPrecoVenda() * qtdVenda;
+
+                        carrinhoRepository.atualizaCarrinhoAndroid(
+                                qtdVenda,
+                                novoValor,
+                                idEmpresa
                         );
 
                         return status(HttpStatus.OK).build();
