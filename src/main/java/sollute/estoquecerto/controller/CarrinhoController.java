@@ -110,8 +110,8 @@ public class CarrinhoController {
         return status(HttpStatus.OK).body(lista);
     }
 
-    @PutMapping("/vender-produtos-carrinho/{fkEmpresa}")
     @Transactional
+    @PutMapping("/vender-produtos-carrinho/{fkEmpresa}")
     public ResponseEntity venderCarrinho(
             @PathVariable Integer fkEmpresa
     ) {
